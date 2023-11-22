@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import cors from "cors";
 import jwt from "jsonwebtoken";
 import {
@@ -7,6 +7,7 @@ import {
   verifyUser,
   parseToken,
   addPost,
+  editPost,
   posts,
   sleep,
 } from "./fakedb";
@@ -43,17 +44,24 @@ app.post("/api/user/validation", (req, res) => {
 });
 
 app.get("/api/posts", async (req, res) => {
-  sleep(5000000)
+  sleep(50000)
   res.json(posts);
 });
 
 // ⭐️ TODO: Implement this yourself
 app.get("/api/posts/:id", (req, res) => {
-  const id = req.params.id;
-  console.log(id)
-  // The line below should be fixed.
-  res.json(posts[0]);
+  const id = parseInt(req.params.id)-1;
+  res.json(posts[id]);
 });
+
+app.get("/api/posts/:id/edit", (req, res) => {
+  const id = parseInt(req.params.id);
+ 
+  // The line below should be fixed.
+ 
+  res.json(posts[id]);
+});
+
 
 /**
  * Problems with this:
@@ -70,5 +78,13 @@ app.post("/api/posts", (req, res) => {
   addPost(incomingPost);
   res.status(200).json({ success: true });
 });
+
+app.post("/api/posts/:id/Edit",(req:Request,res:Response)=>{
+  const id =req.params.id
+  const incomingPost = req.body
+  const target = posts.find((post)=>post.id === parseInt(id))
+  editPost(target, incomingPost)
+  res.status(200).json({ success: true });
+})
 
 app.listen(port, () => console.log("Server is running"));
