@@ -9,11 +9,9 @@ import { useLoaderData } from "react-router-dom";
 export function PostDetailsPage() {
   const { user } = useBoundStore((state) => state)
   const author =user.email.substring(0,user.email.indexOf("@"))
-  const posts = useLoaderData();
-  const id = window.location.pathname.slice(-1)-1
+  const post = useLoaderData();
 
-  const isUserAuther =user.id === posts[id].userId 
-// console.log()
+  const isUserAuther =user.id === post.userId 
 
   return (
     <>
@@ -23,23 +21,23 @@ export function PostDetailsPage() {
         <p className={styles.labels}>Author</p>
         <p className={styles.contents}>{author}</p>
         <p className={styles.labels}>Title</p>
-        <p className={styles.contents}>{posts[id].title}</p>
+        <p className={styles.contents}>{post.title}</p>
         <p className={styles.labels}>Category</p>
-        <p className={styles.contents}>{posts[id].category}</p>
+        <p className={styles.contents}>{post.category}</p>
         <p className={styles.labels}>Content</p>
-        <p className={styles.contentsLast}>{posts[id].content}</p>
+        <p className={styles.contentsLast}>{post.content}</p>
         <Button>
           <Link to="/posts">Back to Posts</Link>
         </Button>
 
         {isUserAuther &&
         (<Button style={{marginLeft:"5px"}}>
-          <Link to={`/posts/${id+1}/edit`}>Edit</Link>
+          <Link to={`/posts/${post.id}/edit`}>Edit</Link>
         </Button>)}
 
       </div>
       <div className={styles.image}>
-        <img src={posts[id].image} alt="image" />
+        <img src={post.image} alt="image" />
       </div>
     </div>
     
@@ -50,9 +48,7 @@ export function PostDetailsPage() {
 }
 
 export const postDetailsLoader = async ({ params }) => {
-  // do something with this
-  const res = await axios.get(`${DOMAIN}/api/posts`);
-  console.log("I ran!");
+  const res = await axios.get(`${DOMAIN}/api/posts/${params.id}`);
   return res.data;
 };
 

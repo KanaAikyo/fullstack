@@ -10,19 +10,15 @@ import { useState } from "react";
 //did not finish the backend part
 export function Edit(){
     const { user } = useBoundStore((state) => state)
-    const author =user.email.substring(0,user.email.indexOf("@"))
-    const posts = useLoaderData();
-    const id = window.location.pathname.substr(7,1)-1
-    const [title, setTitle]=useState(posts[id].title)
-    const [category, setCategory] = useState(posts[id].category);
-    const [content, setContent] = useState(posts[id].content);
-    const [image, setImage] = useState(posts[id].image);
+    const post = useLoaderData();
+    const [title, setTitle]=useState(post.title)
+    const [category, setCategory] = useState(post.category);
+    const [content, setContent] = useState(post.content);
+    const [image, setImage] = useState(post.image);
 
     const modifyPost = (e) => {
-      e.preventDefault(); // Corrected preventDefault spelling
-      axios
-        .patch(`${DOMAIN}/api/posts/${id+1}`, {
-          // .patch(`${DOMAIN}/api/posts`, {
+      e.preventDefault();
+      axios.post(`${DOMAIN}/api/posts/${post.id}/Edit`, {
           title: title,
           category: category,
           content: content,
@@ -33,7 +29,6 @@ export function Edit(){
         })
         .catch((err) => console.log(err));
     }
-    
     
     return(
        <Container>
@@ -64,10 +59,11 @@ export function Edit(){
 
 
                 <Button>
-                  <Link to={`/posts/${id+1}`}>Back to Posts</Link>
+                  <Link to={`/posts/${post.id}`}>Back to Posts</Link>
+          
                 </Button>
                 <Button type="submit" style={{marginLeft:"5px"}} onClick={modifyPost }>
-                  <Link  to={`/posts/${id+1}`}>Edit</Link>
+                  <Link  to={`/posts/${post.id}`}>Save</Link>
                 </Button>
                
             </div>
@@ -80,7 +76,8 @@ export function Edit(){
     )
 }
 
-export const postDetailsLoader2 = async () => {
-    const res = await axios.get(`${DOMAIN}/api/posts`);
-    return res.data;
+export const postDetailsLoader2 = async ({params}) => {
+  const id = params.id-1
+  const res = await axios.get(`${DOMAIN}/api/posts/${id}/edit`)
+  return res.data;
   };
